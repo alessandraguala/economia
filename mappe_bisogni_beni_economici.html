@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bisogni e Beni Economici</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;900&family=Baloo+2:wght@700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --giallo: #FFD23F;
+    --arancio: #FF6B35;
+    --verde: #2EC4B6;
+    --blu: #3A86FF;
+    --viola: #8338EC;
+    --rosa: #FF006E;
+    --bianco: #FFFBF0;
+    --scuro: #1A1A2E;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Nunito', sans-serif;
+    background: var(--bianco);
+    color: var(--scuro);
+    min-height: 100vh;
+  }
+
+  header {
+    background: var(--scuro);
+    padding: 28px 20px 20px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  header::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at 30% 50%, #3A86FF33, transparent 60%),
+                radial-gradient(ellipse at 70% 50%, #8338EC33, transparent 60%);
+  }
+  header h1 {
+    font-family: 'Baloo 2', cursive;
+    font-size: clamp(1.8rem, 5vw, 3rem);
+    color: var(--giallo);
+    position: relative;
+    letter-spacing: -0.5px;
+  }
+  header p {
+    color: #ccc;
+    font-size: 1rem;
+    margin-top: 6px;
+    position: relative;
+  }
+
+  /* NAV TABS */
+  nav {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    padding: 18px 16px;
+    background: #f0ece0;
+    border-bottom: 3px solid #e0dac8;
+  }
+  nav button {
+    font-family: 'Nunito', sans-serif;
+    font-weight: 900;
+    font-size: 0.95rem;
+    border: none;
+    border-radius: 50px;
+    padding: 10px 20px;
+    cursor: pointer;
+    transition: all 0.25s;
+    opacity: 0.65;
+  }
+  nav button.active { opacity: 1; transform: scale(1.07); box-shadow: 0 4px 14px #0003; }
+  nav button:hover { opacity: 1; transform: scale(1.05); }
+
+  .tab-bisogno { background: var(--arancio); color: white; }
+  .tab-tipi    { background: var(--verde);   color: white; }
+  .tab-beni    { background: var(--blu);     color: white; }
+  .tab-categorie { background: var(--viola); color: white; }
+  .tab-quiz    { background: var(--rosa);    color: white; }
+
+  /* SECTIONS */
+  section { display: none; padding: 30px 16px 50px; max-width: 900px; margin: 0 auto; }
+  section.active { display: block; animation: fadeUp 0.4s ease; }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(18px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* SECTION TITLES */
+  .sec-title {
+    font-family: 'Baloo 2', cursive;
+    font-size: clamp(1.5rem, 4vw, 2.2rem);
+    margin-bottom: 8px;
+  }
+  .sec-sub {
+    font-size: 1.05rem;
+    color: #555;
+    margin-bottom: 28px;
+    line-height: 1.5;
+  }
+
+  /* DEFINITION BOX */
+  .def-box {
+    border-radius: 20px;
+    padding: 24px 26px;
+    margin-bottom: 28px;
+    display: flex;
+    align-items: flex-start;
+    gap: 18px;
+  }
+  .def-box .icon { font-size: 2.8rem; flex-shrink: 0; }
+  .def-box h3 { font-family: 'Baloo 2', cursive; font-size: 1.25rem; margin-bottom: 6px; }
+  .def-box p { font-size: 1rem; line-height: 1.6; }
+
+  /* CARDS GRID */
+  .cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 18px;
+    margin-bottom: 28px;
+  }
+  .card {
+    border-radius: 22px;
+    padding: 22px 18px;
+    text-align: center;
+    transition: transform 0.2s, box-shadow 0.2s;
+    cursor: default;
+  }
+  .card:hover { transform: translateY(-6px); box-shadow: 0 12px 30px #0002; }
+  .card .emoji { font-size: 2.6rem; margin-bottom: 10px; display: block; }
+  .card h4 { font-family: 'Baloo 2', cursive; font-size: 1.1rem; margin-bottom: 6px; }
+  .card p { font-size: 0.9rem; line-height: 1.5; }
+
+  /* COMPARISON TABLE */
+  .compare {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 28px;
+  }
+  .compare-col {
+    border-radius: 20px;
+    padding: 22px;
+  }
+  .compare-col h3 { font-family: 'Baloo 2', cursive; font-size: 1.2rem; margin-bottom: 14px; }
+  .compare-col ul { list-style: none; }
+  .compare-col ul li { padding: 7px 0; font-size: 0.95rem; border-bottom: 1px dashed #ffffff55; display: flex; gap: 8px; align-items: center; }
+  .compare-col ul li:last-child { border: none; }
+
+  /* FLOW / CHAIN */
+  .flow {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 0;
+    margin-bottom: 30px;
+  }
+  .flow-step {
+    border-radius: 16px;
+    padding: 16px 20px;
+    text-align: center;
+    min-width: 130px;
+  }
+  .flow-step .emoji { font-size: 2rem; display: block; margin-bottom: 6px; }
+  .flow-step p { font-size: 0.88rem; font-weight: 700; }
+  .flow-arrow { font-size: 2rem; color: #aaa; padding: 0 4px; }
+
+  /* QUIZ */
+  .quiz-q { 
+    background: white;
+    border-radius: 20px;
+    padding: 24px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 16px #0001;
+    border-left: 6px solid var(--rosa);
+  }
+  .quiz-q h4 { font-family: 'Baloo 2', cursive; font-size: 1.15rem; margin-bottom: 14px; }
+  .quiz-options { display: flex; flex-direction: column; gap: 10px; }
+  .quiz-opt {
+    border: 2.5px solid #ddd;
+    border-radius: 12px;
+    padding: 12px 16px;
+    cursor: pointer;
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.97rem;
+    font-weight: 700;
+    background: white;
+    transition: all 0.2s;
+    text-align: left;
+  }
+  .quiz-opt:hover { border-color: var(--rosa); background: #fff0f6; }
+  .quiz-opt.correct { background: #d4f7e7; border-color: #2EC4B6; color: #0a5c4a; }
+  .quiz-opt.wrong   { background: #fde0e0; border-color: #e03; color: #7a0000; }
+  .quiz-opt.reveal  { opacity: 0.5; }
+  .quiz-feedback {
+    margin-top: 12px;
+    font-weight: 700;
+    font-size: 0.97rem;
+    display: none;
+  }
+
+  /* SUMMARY TABLE */
+  .summary-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0 10px;
+    margin-bottom: 28px;
+  }
+  .summary-table th {
+    font-family: 'Baloo 2', cursive;
+    font-size: 1rem;
+    padding: 10px 16px;
+    text-align: left;
+  }
+  .summary-table td {
+    padding: 12px 16px;
+    font-size: 0.95rem;
+    background: white;
+  }
+  .summary-table tr td:first-child { border-radius: 14px 0 0 14px; font-weight: 700; }
+  .summary-table tr td:last-child  { border-radius: 0 14px 14px 0; }
+
+  .badge {
+    display: inline-block;
+    border-radius: 30px;
+    padding: 4px 14px;
+    font-size: 0.82rem;
+    font-weight: 900;
+    color: white;
+    margin: 2px;
+  }
+
+  /* COLORS */
+  .bg-giallo { background: #FFF3C4; }
+  .bg-arancio { background: #FFE6DC; }
+  .bg-verde   { background: #D6F5F3; }
+  .bg-blu     { background: #D8EAFF; }
+  .bg-viola   { background: #EDE0FF; }
+  .bg-rosa    { background: #FFE0F0; }
+
+  .fill-arancio { background: var(--arancio); color: white; }
+  .fill-verde   { background: var(--verde);   color: white; }
+  .fill-blu     { background: var(--blu);     color: white; }
+  .fill-viola   { background: var(--viola);   color: white; }
+  .fill-rosa    { background: var(--rosa);    color: white; }
+  .fill-giallo  { background: var(--giallo);  color: var(--scuro); }
+
+  .txt-arancio { color: var(--arancio); }
+  .txt-verde   { color: var(--verde); }
+  .txt-blu     { color: var(--blu); }
+  .txt-viola   { color: var(--viola); }
+
+  /* HIGHLIGHT BOX */
+  .highlight {
+    border-radius: 16px;
+    padding: 18px 22px;
+    font-size: 1rem;
+    line-height: 1.65;
+    margin-bottom: 20px;
+  }
+  .highlight strong { font-size: 1.05rem; }
+
+  @media (max-width: 500px) {
+    .compare { grid-template-columns: 1fr; }
+    .flow-step { min-width: 100px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>📚 Bisogni e Beni Economici</h1>
+  <p>Mappe concettuali interattive · Clicca le schede qui sotto!</p>
+</header>
+
+<nav>
+  <button class="tab-bisogno active" onclick="show('bisogno')">🌟 Cos'è un Bisogno?</button>
+  <button class="tab-tipi"    onclick="show('tipi')">🗂️ Tipi di Bisogno</button>
+  <button class="tab-beni"    onclick="show('beni')">🛒 I Beni Economici</button>
+  <button class="tab-categorie" onclick="show('categorie')">🏷️ Categorie di Beni</button>
+  <button class="tab-quiz"    onclick="show('quiz')">🎯 Quiz!</button>
+</nav>
+
+<!-- ===== SEZIONE 1: BISOGNO ===== -->
+<section id="bisogno" class="active">
+  <p class="sec-title txt-arancio">🌟 Cos'è un Bisogno Economico?</p>
+  <p class="sec-sub">Un bisogno è qualcosa che vogliamo o di cui abbiamo necessità. Ma non tutti i bisogni sono "economici"!</p>
+
+  <div class="def-box bg-giallo">
+    <span class="icon">💡</span>
+    <div>
+      <h3>Bisogno Economico</h3>
+      <p>È un bisogno che si soddisfa con un <strong>bene limitato</strong> — cioè qualcosa che si deve comprare o procurare con fatica.</p>
+    </div>
+  </div>
+
+  <div class="compare">
+    <div class="compare-col fill-verde">
+      <h3>✅ Bisogno Economico</h3>
+      <ul>
+        <li>🍕 Ho fame → compro cibo</li>
+        <li>📱 Voglio uno smartphone → lo acquisto</li>
+        <li>👕 Ho freddo → compro un vestito</li>
+        <li>🚗 Voglio spostarmi → prendo il bus</li>
+      </ul>
+    </div>
+    <div class="compare-col fill-arancio">
+      <h3>❌ Non è Economico</h3>
+      <ul>
+        <li>😮‍💨 Respiro → l'aria è gratuita e illimitata!</li>
+        <li>☀️ Mi scaldo al sole → gratis per tutti</li>
+        <li>😴 Dormo → non compro il sonno</li>
+      </ul>
+    </div>
+  </div>
+
+  <p class="sec-title" style="font-size:1.3rem; margin-bottom:14px;">🔄 Come funziona?</p>
+  <div class="flow">
+    <div class="flow-step fill-arancio"><span class="emoji">😣</span><p>Sento un bisogno</p></div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step fill-giallo"><span class="emoji">🔍</span><p>Cerco un bene</p></div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step fill-verde"><span class="emoji">💰</span><p>Pago / ottengo</p></div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step fill-blu"><span class="emoji">😊</span><p>Soddisfatto!</p></div>
+  </div>
+
+  <div class="highlight bg-arancio">
+    <strong>💰 Consumo vs Risparmio</strong><br><br>
+    <strong>Consumo</strong> = uso i miei soldi oggi per soddisfare i bisogni di <em>adesso</em> (es. compro la pizza 🍕)<br><br>
+    <strong>Risparmio</strong> = metto da parte i soldi per i bisogni di <em>domani</em> (es. risparmio per le vacanze ✈️)
+  </div>
+</section>
+
+<!-- ===== SEZIONE 2: TIPI DI BISOGNO ===== -->
+<section id="tipi">
+  <p class="sec-title txt-verde">🗂️ I Tipi di Bisogno</p>
+  <p class="sec-sub">I bisogni si possono classificare in tanti modi. Eccoli tutti con esempi chiari!</p>
+
+  <div class="cards">
+    <div class="card bg-arancio">
+      <span class="emoji">❤️</span>
+      <h4>PRIMARI</h4>
+      <p>Indispensabili per vivere. Senza di loro non sopravviviamo.</p>
+      <p style="margin-top:8px; font-size:0.85rem;">🍞 Mangiare · 💧 Bere · 🏠 Dormire</p>
+    </div>
+    <div class="card bg-blu">
+      <span class="emoji">⭐</span>
+      <h4>SECONDARI</h4>
+      <p>Non indispensabili, ma migliorano la nostra vita.</p>
+      <p style="margin-top:8px; font-size:0.85rem;">📱 Smartphone · 🎬 Cinema · ✈️ Viaggi</p>
+    </div>
+    <div class="card bg-giallo">
+      <span class="emoji">♾️</span>
+      <h4>ILLIMITATI</h4>
+      <p>Non finiscono mai! Abbiamo sempre nuovi desideri.</p>
+      <p style="margin-top:8px; font-size:0.85rem;">Oggi voglio una bici → domani una moto 🏍️</p>
+    </div>
+    <div class="card bg-verde">
+      <span class="emoji">👤</span>
+      <h4>INDIVIDUALI</h4>
+      <p>Riguardano una sola persona.</p>
+      <p style="margin-top:8px; font-size:0.85rem;">🍰 Voglio quella torta specifica</p>
+    </div>
+    <div class="card bg-rosa">
+      <span class="emoji">🔁</span>
+      <h4>RISORGENTI</h4>
+      <p>Tornano dopo un po' di tempo, ciclicamente.</p>
+      <p style="margin-top:8px; font-size:0.85rem;">💧 Sete · 😴 Sonno · 🍽️ Fame</p>
+    </div>
+    <div class="card bg-viola">
+      <span class="emoji">🙋</span>
+      <h4>SOGGETTIVI</h4>
+      <p>Cambiano da persona a persona. Non siamo tutti uguali!</p>
+      <p style="margin-top:8px; font-size:0.85rem;">C'è chi ama il calcio ⚽, chi la musica 🎸</p>
+    </div>
+    <div class="card bg-giallo">
+      <span class="emoji">🔀</span>
+      <h4>VARIABILI</h4>
+      <p>Cambiano nel tempo o a seconda della situazione.</p>
+      <p style="margin-top:8px; font-size:0.85rem;">☀️ Estate → gelato · ❄️ Inverno → cioccolata calda</p>
+    </div>
+  </div>
+
+  <div class="highlight fill-verde" style="color:white;">
+    <strong>🧠 Ricorda la differenza chiave!</strong><br><br>
+    <strong>Primario</strong> = DEVO averlo (o non vivo) · Es. acqua, cibo, vestiti<br>
+    <strong>Secondario</strong> = VOGLIO averlo (ma posso farne a meno) · Es. Netflix, scarpe di marca
+  </div>
+</section>
+
+<!-- ===== SEZIONE 3: BENI ECONOMICI ===== -->
+<section id="beni">
+  <p class="sec-title txt-blu">🛒 I Beni Economici</p>
+  <p class="sec-sub">Un bene economico è qualcosa che possiamo usare per soddisfare un bisogno. Deve avere 3 caratteristiche!</p>
+
+  <div class="cards" style="grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));">
+    <div class="card fill-blu">
+      <span class="emoji">✅</span>
+      <h4>1. UTILE</h4>
+      <p>Soddisfa un bisogno. Se non serve a nulla, non è un bene economico.</p>
+      <p style="margin-top:8px; font-size:0.85rem;">Es. il pane soddisfa la fame 🍞</p>
+    </div>
+    <div class="card fill-verde">
+      <span class="emoji">🔍</span>
+      <h4>2. REPERIBILE</h4>
+      <p>Possiamo trovarlo e ottenerlo.</p>
+      <p style="margin-top:8px; font-size:0.85rem;">Es. posso andare a comprarlo al supermercato 🏪</p>
+    </div>
+    <div class="card fill-arancio">
+      <span class="emoji">⚖️</span>
+      <h4>3. LIMITATO</h4>
+      <p>Non ce n'è per tutti infinitamente. È scarso, non abbondante.</p>
+      <p style="margin-top:8px; font-size:0.85rem;">Es. il cibo non cresce da solo infinitamente 🌾</p>
+    </div>
+  </div>
+
+  <div class="highlight bg-giallo">
+    <strong>💡 Perché l'aria NON è un bene economico?</strong><br><br>
+    L'aria soddisfa un bisogno (respirare) ed è reperibile ovunque... ma <strong>non è limitata</strong>! Ce n'è tantissima per tutti, gratis. Per questo non è un bene economico.
+  </div>
+</section>
+
+<!-- ===== SEZIONE 4: CATEGORIE DI BENI ===== -->
+<section id="categorie">
+  <p class="sec-title txt-viola">🏷️ Le Categorie di Beni</p>
+  <p class="sec-sub">I beni economici si dividono in tanti tipi diversi. Eccoli tutti!</p>
+
+  <table class="summary-table">
+    <thead>
+      <tr>
+        <th style="color:var(--viola)">Tipo</th>
+        <th style="color:var(--viola)">Significato</th>
+        <th style="color:var(--viola)">Esempi</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td style="background:#EDE0FF; border-radius:14px 0 0 14px;">♻️ DUREVOLI</td>
+        <td style="background:#f5f0ff;">Si usano tante volte e non si consumano subito</td>
+        <td style="background:#f5f0ff; border-radius:0 14px 14px 0;">🚗 Macchina · 📺 TV · 🧥 Cappotto</td>
+      </tr>
+      <tr>
+        <td style="background:#FFE0F0; border-radius:14px 0 0 14px;">🗑️ NON DUREVOLI</td>
+        <td style="background:#fff0f6;">Si esauriscono appena li usi una volta</td>
+        <td style="background:#fff0f6; border-radius:0 14px 14px 0;">🥪 Panino · 💊 Medicinale · 🥤 Bibita</td>
+      </tr>
+      <tr>
+        <td style="background:#D8EAFF; border-radius:14px 0 0 14px;">🔗 COMPLEMENTARI</td>
+        <td style="background:#eef4ff;">Devono essere usati insieme, uno non funziona senza l'altro</td>
+        <td style="background:#eef4ff; border-radius:0 14px 14px 0;">🖨️ Stampante + cartucce · 🚗 Macchina + benzina</td>
+      </tr>
+      <tr>
+        <td style="background:#D6F5F3; border-radius:14px 0 0 14px;">🔄 SURROGATI</td>
+        <td style="background:#edfaf9;">Soddisfano lo stesso bisogno e si possono usare al posto l'uno dell'altro</td>
+        <td style="background:#edfaf9; border-radius:0 14px 14px 0;">🧈 Burro ↔️ Margarina · 🚌 Bus ↔️ 🚆 Treno</td>
+      </tr>
+      <tr>
+        <td style="background:#FFF3C4; border-radius:14px 0 0 14px;">🏭 STRUMENTALI</td>
+        <td style="background:#fffbe8;">Servono per produrre altri beni, non per il consumo diretto</td>
+        <td style="background:#fffbe8; border-radius:0 14px 14px 0;">⚙️ Macchinari industriali · 🚜 Trattore agricolo</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- Visual pairs -->
+  <p class="sec-title" style="font-size:1.3rem; margin-bottom:16px;">🔗 Complementari vs 🔄 Surrogati</p>
+  <div class="compare">
+    <div class="compare-col fill-blu">
+      <h3>🔗 Complementari</h3>
+      <p style="margin-bottom:14px; font-size:0.95rem;">Hanno BISOGNO l'uno dell'altro:</p>
+      <ul>
+        <li>🖨️ Stampante + 🖨️🖋️ Cartucce</li>
+        <li>🚗 Auto + ⛽ Benzina</li>
+        <li>📱 Cellulare + 🔌 Caricatore</li>
+      </ul>
+    </div>
+    <div class="compare-col fill-viola">
+      <h3>🔄 Surrogati</h3>
+      <p style="margin-bottom:14px; font-size:0.95rem;">Fanno la STESSA cosa, si possono scambiare:</p>
+      <ul>
+        <li>🧈 Burro ↔️ Margarina</li>
+        <li>🚌 Bus ↔️ 🚆 Treno</li>
+        <li>☕ Caffè ↔️ 🍵 Tè</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ===== SEZIONE 5: QUIZ ===== -->
+<section id="quiz">
+  <p class="sec-title txt-rosa">🎯 Mettiti alla Prova!</p>
+  <p class="sec-sub">Scegli la risposta giusta. Puoi farcela! 💪</p>
+
+  <div id="quiz-container"></div>
+  <div style="text-align:center; margin-top:10px;">
+    <button onclick="resetQuiz()" style="font-family:'Nunito',sans-serif; font-weight:900; background:var(--rosa); color:white; border:none; border-radius:50px; padding:12px 30px; font-size:1rem; cursor:pointer; margin-top:10px;">🔄 Ricomincia</button>
+  </div>
+</section>
+
+<script>
+const quizData = [
+  {
+    q: "L'aria è un bene economico?",
+    opts: ["Sì, perché la respiriamo ogni giorno", "No, perché è gratuita e illimitata", "Sì, perché è utile", "No, perché non è reperibile"],
+    correct: 1,
+    feedback: "Giusto! 🎉 L'aria NON è un bene economico perché è illimitata: ce n'è per tutti, gratis!"
+  },
+  {
+    q: "Mangiare è un bisogno…",
+    opts: ["Secondario", "Soggettivo", "Primario", "Variabile"],
+    correct: 2,
+    feedback: "Esatto! 🌟 Mangiare è un bisogno PRIMARIO: senza cibo non possiamo sopravvivere!"
+  },
+  {
+    q: "La stampante e le cartucce sono beni…",
+    opts: ["Surrogati", "Strumentali", "Durevoli", "Complementari"],
+    correct: 3,
+    feedback: "Perfetto! 🖨️ Sono COMPLEMENTARI: una stampante senza cartucce non funziona!"
+  },
+  {
+    q: "Il bus e il treno sono beni…",
+    opts: ["Complementari", "Surrogati", "Strumentali", "Non durevoli"],
+    correct: 1,
+    feedback: "Bravissimo! 🚌🚆 Sono SURROGATI: entrambi ti portano da A a B, puoi usare l'uno o l'altro!"
+  },
+  {
+    q: "Un panino è un bene…",
+    opts: ["Durevole", "Strumentale", "Non durevole", "Complementare"],
+    correct: 2,
+    feedback: "Corretto! 🥪 Il panino è NON DUREVOLE: lo mangi e sparisce!"
+  },
+  {
+    q: "La sete è un bisogno…",
+    opts: ["Primario e risorgente", "Secondario e soggettivo", "Primario e variabile", "Individuale e illimitato"],
+    correct: 0,
+    feedback: "Super! 💧 La sete è PRIMARIA (devi bere per vivere) e RISORGENTE (torna sempre dopo un po')!"
+  },
+  {
+    q: "I macchinari industriali sono beni…",
+    opts: ["Durevoli e strumentali", "Non durevoli e surrogati", "Complementari e primari", "Variabili e limitati"],
+    correct: 0,
+    feedback: "Ottimo! ⚙️ Sono STRUMENTALI (servono a produrre altri beni) e DUREVOLI (si usano tante volte)!"
+  }
+];
+
+let answered = [];
+
+function buildQuiz() {
+  const container = document.getElementById('quiz-container');
+  container.innerHTML = '';
+  answered = new Array(quizData.length).fill(false);
+
+  quizData.forEach((item, i) => {
+    const div = document.createElement('div');
+    div.className = 'quiz-q';
+    div.innerHTML = `
+      <h4>❓ ${i+1}. ${item.q}</h4>
+      <div class="quiz-options">
+        ${item.opts.map((o, j) => `
+          <button class="quiz-opt" onclick="answer(${i}, ${j})" id="opt-${i}-${j}">${o}</button>
+        `).join('')}
+      </div>
+      <div class="quiz-feedback" id="fb-${i}">${item.feedback}</div>
+    `;
+    container.appendChild(div);
+  });
+}
+
+function answer(qi, selected) {
+  if (answered[qi]) return;
+  answered[qi] = true;
+
+  const item = quizData[qi];
+  const fb = document.getElementById(`fb-${qi}`);
+
+  for (let j = 0; j < item.opts.length; j++) {
+    const btn = document.getElementById(`opt-${qi}-${j}`);
+    btn.disabled = true;
+    if (j === item.correct) btn.classList.add('correct');
+    else if (j === selected) btn.classList.add('wrong');
+    else btn.classList.add('reveal');
+  }
+
+  fb.style.display = 'block';
+  fb.style.color = selected === item.correct ? '#0a5c4a' : '#7a0000';
+}
+
+function resetQuiz() { buildQuiz(); }
+function show(id) {
+  document.querySelectorAll('section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  document.querySelector(`.tab-${id}`).classList.add('active');
+}
+
+buildQuiz();
+</script>
+</body>
+</html>
